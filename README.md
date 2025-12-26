@@ -83,5 +83,3 @@ Unlike "Black Box" AI models, this system prioritizes **Transparency**:
 *   Recruiters can see *exactly* which skills matched and which were missing, eliminating "trust issues" with the ranking.
 
 ---
-
-*Verified by Antigravity*
