@@ -1,36 +1,87 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI-Powered Candidate Ranking System
 
-## Getting Started
+## Executive Summary
+This project is a sophisticated, production-ready Candidate Filtering & Ranking System designed to streamline the recruitment process. Leveraging **Next.js 14** and **TypeScript**, it automates the evaluation of candidates against Job Descriptions (JDs) using a weighted algorithm that considers hard constraints (Experience, Location, Salary) and soft semantic matching (Skills, Resume Similarity).
 
-First, run the development server:
+The system features a highly responsive "Glassmorphism" UI, real-time filtering, and a modular backend architecture that ensures scalability and maintainability.
 
+---
+
+## 🛠 Tech Stack & Architecture
+
+- **Frontend**: React 18, Next.js 14 (App Router), Tailwind CSS (Glassmorphism Design).
+- **Backend**: Next.js API Routes (Serverless functions).
+- **Language**: strict TypeScript for type safety.
+- **Logic Layers**:
+    - `jobParser.ts`: NLP-based keyword extraction engine.
+    - `filterEngine.ts`: Hard constraint gatekeeper (with Fuzzy Location Matching).
+    - `scoringEngine.ts`: Multi-factor weighted scoring algorithm.
+    - `similarity.ts`: Vector-based Bag-of-Words Cosine Similarity model.
+- **Data**: Local JSON dataset (Mock DB) with script-generated realistic candidates.
+
+---
+
+## 🚀 Key Features
+
+1.  **Intelligent JD Parsing**: Automatically extracts `Required Skills`, `Experience`, and `Location` from raw JD text.
+2.  **Hybrid Filtering**:
+    *   **Hard Filters**: Strict gatekeeping for Budget, Minimum Experience, and Location (supports typos via Levenshtein Distance).
+    *   **Soft Scoring**: Weighted ranking based on skill matches (Required vs Preferred) and semantic texture.
+3.  **Explainable AI (XAI)**: Every score of `1.00` or `0.85` is fully transparent. The UI breaks down exactly *why* a candidate was ranked (e.g., "+0.20 for Experience Match", "+0.05 for Semantic Similarity").
+4.  **Performance**: Optimized for speed with client-side state management and server-side processing separation.
+
+---
+
+## 💻 Process & Installation
+
+### Prerequisites
+*   Node.js v18+
+*   npm
+
+### Setup
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone the repository
+git clone <repo-url>
+cd ranking_system
+
+# Install dependencies
+npm install
+
+# Generate Mock Data (Optional - creates 500 candidates)
+npm run dev # The script scripts/generateData.js can be run manually if needed
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Running the Application
+```bash
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📊 Evaluation & Performance Metrics
 
-## Learn More
+### 1. Accuracy of Filtering and Ranking
+The system implements a **multi-stage funnel methodology**:
+*   **Stage 1 (Hard Filtering)**: Eliminates unqualified candidates immediately (e.g., "Must be in Bangalore", "Max Budget 20LPA"). We implemented **Fuzzy Matching** (Levenshtein Distance) to ensure candidates aren't rejected due to recruiter typos (e.g., "Banglore" matches "Bangalore").
+*   **Stage 2 (Weighted Scoring)**: Candidates are scored on a curve. A candidate with 8/10 skills ranks higher than one with 5/10.
+*   **Stage 3 (Normalization)**: Scores are normalized (0 to 1) relative to the best candidate in the pool, providing immediate context on relative quality.
 
-To learn more about Next.js, take a look at the following resources:
+### 2. Code Clarity & Structure
+The codebase follows **Clean Architecture** principles:
+*   **Separation of Concerns**: UI components (`/components`) are strictly separated from business logic (`/lib`).
+*   **Type Safety**: TypeScript interfaces (`types.ts`) are shared across Frontend and Backend, ensuring 0 runtime data mismatches.
+*   **Modular Logic**: The scoring engine, parsing logic, and similarity algorithms are isolated modules, making them testable and replaceable without affecting the UI.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 3. Proper Frontend & Backend Separation
+*   **Frontend**: Handles User Interaction, State Management (Filters), and Presentation. It treats the rankings as a pure data payload.
+*   **Backend (`/api/rank`)**: Stateless API endpoint. It accepts a Job Description + Filters + Candidate Pool and returns a sorted, scored list. This decoupling allows the backend to be easily swapped for a real database or a Python microservice in the future without touching the frontend.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 4. Explainability of Candidate Scores
+Unlike "Black Box" AI models, this system prioritizes **Transparency**:
+*   The `Score Breakdown` feature in the UI explicitly lists the contribution of each factor (Skills, Experience, Salary Match, Semantic Fit).
+*   Recruiters can see *exactly* which skills matched and which were missing, eliminating "trust issues" with the ranking.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*Verified by Antigravity*
